@@ -1,0 +1,3 @@
+std_msgs/Header header
+string obj_class
+int64 ordinal_number

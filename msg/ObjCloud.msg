@@ -1,0 +1,3 @@
+std_msgs/Header header
+string obj_class
+sensor_msgs/PointCloud2 cloud

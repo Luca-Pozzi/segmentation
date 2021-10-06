@@ -1,0 +1,5 @@
+detectron_venv/
+src/
+models/
+*.pkl
+*.pyc

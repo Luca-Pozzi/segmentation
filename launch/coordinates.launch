@@ -1,0 +1,31 @@
+<launch>
+    <!-- ARGS and PARAMS -->
+    <arg name = "pointcloud_topic" default = "/xtion/depth_registered/points" />
+    <arg name = "visualize" default = "false" />
+    <arg name = "detection_score_threshold" default = "0.75" /> 
+    <!-- CORE FUNCTIONALITIES -->
+    <include file = "$(find segmentation)/launch/camera_segmentation.launch" >
+        <arg name = "visualize" value = "$(arg visualize)" />
+        <arg name = "detection_score_threshold" value = "$(arg detection_score_threshold)" />
+    </include>
+    
+    <node pkg = "segmentation" type = "ObjectPointcloud.py" name = "object_pointcloud" output = "screen">
+        <remap from = "/pointcloud" to = "$(arg pointcloud_topic)" />
+    </node>
+
+    <!-- Run a nodelet manager -->
+    <node pkg="nodelet" type="nodelet" name="object_outlier_removal_manager" args="manager"/>
+
+    <!-- Run a statistical outlier removal to clean a pointcloud -->
+    <node pkg="nodelet" type="nodelet" name="object_outlier_removal" args="load pcl/StatisticalOutlierRemoval object_outlier_removal_manager">
+        <remap from="~input" to="/segmentation_result/cloud" />
+        <rosparam>
+            mean_k: 100       <!-- The number of points (k) to use for mean distance estimation Range: 2 to 100  -->
+            stddev: 0.1       <!-- The standard deviation multiplier threshold. All points outside the mean +- sigma * std_mul will be considered outliers. Range: 0.0 to 5.0  -->
+            negative: false   <!-- Set whether the inliers should be returned (true) or the outliers (false) -->
+                                <!-- the above line comes from ros.org, but the behavior seems to be the opposite -->
+        </rosparam>
+    </node>
+
+    <node pkg = "segmentation" type = "SemanticCloud.py" name = "semantic_cloud" />
+</launch>

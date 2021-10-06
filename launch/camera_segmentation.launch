@@ -1,0 +1,23 @@
+<launch>
+	<!-- ARGS and PARAMS -->
+	<arg name = "rgb_image_topic" default = "/xtion/rgb/image_rect_color/compressed" /> <!-- this was /xtion/rgb/image_raw/compressed-->
+																						<!-- the topic where the RGB images to be segmented are published -->
+	<arg name = "visualize" default = "false" /> <!-- choose to visualize or not the segmentation output -->
+	<!-- confidence threshold (range [0 1]) of the segmentation algorithm -->
+	<arg name = "detection_score_threshold" default = "0.75" />
+	<param name = "detection_score_threshold" type = "double" value = "$(arg detection_score_threshold)" /> 
+	<!-- CORE FUNCTIONALITIES -->
+	<!-- throttle node that downsamples the image stream -->
+	<node pkg = "topic_tools" type = "throttle" name = "camera_throttler" required = "true" args = "messages $(arg rgb_image_topic) 5 $(arg rgb_image_topic)/throttled" />
+	
+	<!-- processing node that carries out the actual segmentation -->
+	<node pkg = "segmentation" type = "processing.py" name = "processing" required = "true" output = "screen">
+		<remap from = "/rgb_image" to = "$(arg rgb_image_topic)/throttled"/>
+		<!-- publish to topic "/segmentation_result" -->
+	</node>
+	<!-- OPTIONALS -->
+	<group if = "$(arg visualize)" >
+		<!-- a node to visualize the segmentation result -->
+		<node pkg = "segmentation" type = "visualization.py" name = "visualization" /> <!-- subscribes to topic "/segmentation_result" -->
+	</group>
+</launch>

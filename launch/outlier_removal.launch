@@ -1,0 +1,14 @@
+<launch>
+  <node pkg="nodelet" type="nodelet" name="pcl_manager" args="manager"/>
+
+  <!-- Run a statistical outlier removal to clean a pointcloud -->
+  <node pkg="nodelet" type="nodelet" name="outlier_removal" args="load pcl/StatisticalOutlierRemoval pcl_manager">
+    <remap from="~input" to="/segmentation_result/cloud" />
+    <rosparam>
+      mean_k: 100       <!-- The number of points (k) to use for mean distance estimation Range: 2 to 100  -->
+      stddev: 1.0       <!-- The standard deviation multiplier threshold. All points outside the mean +- sigma * std_mul will be considered outliers. Range: 0.0 to 5.0  -->
+      negative: false   <!-- Set whether the inliers should be returned (true) or the outliers (false) -->
+                        <!-- the above line comes from ros.org, but the behavior seems to be the opposite -->
+    </rosparam>
+  </node>
+</launch>
