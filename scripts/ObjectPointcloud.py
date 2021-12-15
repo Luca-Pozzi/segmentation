@@ -1,4 +1,5 @@
-#! /root/venv/cv/bin/python
+#!/home/luca/tiago_public_ws/src/segmentation/detectron_venv/bin/python3
+
 # This script defines a subscriber node that reads the info published on 
 # /output/segmentation and returns the pointcloud of every segmented object.
 
@@ -66,9 +67,15 @@ class ObjectCoordinates:
         for label, mask in zip(predicted_classes, predicted_masks):
             if label in SELECTED_CLASSES:
                 bool_mask = np.stack([np.array(mask)] * 3, axis = -1)
+                
+                '''
+                TODO:   move the following two lines OUT of the for loop. This won't probably impact on the tiago_pouring behavior as in that application
+                        there is tipically a single object belonging to the selected class
+                '''
                 # get an iterable object from the pointcloud and use it to fill a numpy array of points (faster than point_cloud2.read_points_list)
                 depth_points_iterable = point_cloud2.read_points(pointcloud2, skip_nans = False, field_names = ("x", "y", "z"))
                 depth_points_array = np.reshape(np.array([point for point in depth_points_iterable]), newshape = (pointcloud2.height, pointcloud2.width, 3))
+                
                 # apply the mask to the pointcloud
                 masked_depth_points = np.ma.array(depth_points_array, mask = ~bool_mask) # were the mask is 1 the data are hidden
                 ### publish PointCloud2 message

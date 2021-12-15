@@ -15,7 +15,8 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog #DatasetCatalog
 
 # Path declarations
-MODELS_DIR = "/root/tiago_public_ws/src/segmentation/models"
+# TODO: get the package path as a node arg so to make the path system independet
+MODELS_DIR = "/home/luca/tiago_public_ws/src/segmentation/models"
 CONFIG_FILE_DIR = "COCO-InstanceSegmentation/"
 # Default values declarations
 MODEL_NAME = "mask_rcnn_R_50_FPN_3x"
