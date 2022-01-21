@@ -1,0 +1,19 @@
+<launch>
+    <!-- ARGS and PARAMS -->
+    <arg name = "rgb_image_topic" default = "/xtion/rgb/image_rect_color/compressed" />
+    <arg name = "depth_image_topic" default = "/xtion/depth/image/compressedDepth" />
+    <arg name = "camera_params_topic" default = "/xtion/depth/camera_info" />
+    <arg name = "detection_score_threshold" default = "0.6" />
+    <param name = "detection_score_threshold" type = "double" value = "$(arg detection_score_threshold)" />
+
+    <!-- Create a file with all the objects that can be detected, one per line.
+    Leave uncommented the ones you are interested in or create a separate file and pass it as
+    a command line argument. -->
+    <!--<arg name = "selected_classes_file" default = "TODO" />-->
+        
+    <node pkg = "segmentation" type = "ObjectPointcloud.py" name = "object_pointcloud" output = "screen">
+        <remap from = "/rgb_image" to = "$(arg rgb_image_topic)" />
+        <remap from = "/depth_image" to = "$(arg depth_image_topic)" />
+        <remap from = "/camera_params" to = "$(arg camera_params_topic)" />
+    </node>
+</launch>

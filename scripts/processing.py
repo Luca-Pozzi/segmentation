@@ -77,7 +77,6 @@ class ImageProcessing:
                 # increment the index
                 output_list_idx += 1
 
-    '''
     def format_bbox(self, pred_boxes, pred_classes_list, selected_classes_list = SELECTED_CLASSES):
         # flatten the bbox list
         pred_boxes_list = []
@@ -95,7 +94,6 @@ class ImageProcessing:
         else:
             # if the above condition is not met, thrown an error message and do not publish
             print('ERROR: the number of vertexes of the bounding boxes is not a multiple of 4.')
-	'''
 
     def segment(self, ros_data):
         # Callback function of subscribed topic (could be "camera" or "coco"). 
@@ -125,7 +123,7 @@ class ImageProcessing:
         '''
         # Create a custom message with the predicted classes and the corresponding bounding boxes and masks
         self.format_classes(outputs['instances'].pred_classes.tolist())
-        #self.format_bbox(outputs['instances'].pred_boxes, outputs['instances'].pred_classes.tolist())
+        self.format_bbox(outputs['instances'].pred_boxes, outputs['instances'].pred_classes.tolist())
         self.format_masks(outputs['instances'].pred_masks.tolist(), outputs['instances'].pred_classes.tolist())
 
         # publish the message with the annotated image and the selected masks
